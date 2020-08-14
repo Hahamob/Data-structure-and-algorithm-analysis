@@ -232,3 +232,230 @@ Insert(ElementType X,List L,Position P)
    CursorSpace[TmpCell].Next=CursorSpace[P].next;
    CursorSpace[P].Next=TmpCell;
  }
+
+
+
+
+
+
+
+
+
+
+
+/*栈ADT链表实现的类型声明*/
+#ifndef _Stack_h
+
+struct Node;
+typedef struct Node *PtrToNode;
+typedef PtrToNode Stack;
+
+int IsEmpty(Stack S);
+Stack CreateStack(void);
+void DisposeStack(Stack S);
+void MakeEmpty(Stack S);
+void Push(ElementType X,Stack S);
+ElementType Top(Stack S);
+void Pop(Stack S);
+
+#endif /*_Stack_h*/
+
+Struct Node
+{
+    ElementType Element;
+    PtrToNode Next;
+};
+
+
+/*测试栈是否是空栈的例程---链表实现*/
+int
+IsEmpty(Stack S)
+{
+    return S->Next == NULL;
+}
+
+
+/*创建一个空栈的例程---链表实现*/
+Stack
+CreateStack(void)
+{
+    Stack S;
+    
+    S = malloc(sizeof(struct Node));
+    if( S == NULL)
+        FatalError("out of space!");
+    S->Next == NULL;
+    MakeEmpty(S);
+    return S;
+ }
+ 
+ void
+ MakeEmpty(Stack S)
+ {
+    if(S == NULL)
+        Error("must use CreateStack first");
+    else
+        while(!IsEmpty(S))
+            Pop(S);
+ }
+ 
+ 
+ /*元素进栈的例程---链表实现*/
+ void
+ Push(ElementType X,Stack S)
+ {
+    PtrNode TmpCell;
+    
+    TmpCell = Mallcon(sizeof(struct Node));
+    if(TmpCell==NULL)
+        FatalError("out of space!");
+    else
+    {
+        TmpCell->Element = X;
+        TmpCell->Next = S->Next;
+        S->Next = TmpCell;
+    }
+  }
+  
+  
+  /*返回栈顶元素的例程---链表实现*/
+  ElementType
+  Top(Stack S)
+  {
+      if(!IsEmpty(S))
+          return S->Next->Element;
+      Error("Empty stack");
+      return 0;
+  }
+  
+  /*从栈弹出元素的例程---链表实现*/
+  void
+  Pop(Stack S)
+  {
+      PtrToNode FirstCell;
+      
+      if(IsEmpty(S))
+          Error("Empty stack");
+      else
+      {
+          FirstCell = S->Next;
+          S->Next = S->Next->Next;
+          free(FirstCell);
+      }
+  }
+
+
+/*栈的声明----数组实现*/
+#ifndef _Stack_h
+
+struct StackRecord;
+typedef struct StackRecord *Stack;
+
+int IsEmpty(Stack S);
+int IsFull(Stack S);
+Stack CreateStack(int MaxElements);
+void DisposeStack(Stack S);
+void MakeEmpty(Stack S);
+void Push(ElementType X,Stack S);
+ElementType Top(Stack S);
+void Pop(Stack S);
+ElementType TopAndPop(Stack S);
+
+#endif /*_Stack_h*/
+
+Struct StackRecord
+{
+    int Capacity;
+    int TopOfStack;
+    ElementType *Array;
+};
+
+
+/*栈的创建----数组声明*/
+Stack
+CreateStack(int MaxElements)
+{
+    Stack S;
+    
+    if(MaxElements<MinStackSize)
+        Error("Stack size is too small")
+        
+    S=malloc(sizeof(struct StackRecord));
+    if(S==NULL)
+        FatalError("out of space!")
+        
+    S->Array = Malloc(sizeof(ElementType)*MaxElements);
+    if(S->Array == NULL)
+        FatalError("out of space!!!");
+    S->Capacity = MaxElements;
+    MakeEmpty(S);
+    
+    return S;
+}
+
+
+/*释放栈的例程----数组实现*/
+void
+DisposeStack(Stack S)
+{
+    if(S!=NULL)
+    {
+        free(S->Array);
+        free(S);
+    }
+}
+
+/*检测栈是否是空栈的例程----数组实现*/
+int 
+IsEmpty(Stack S)
+{
+    return S->TopOfStack == EmptyTOS;
+}
+
+/*创建一个空栈的例程----数组实现*/
+void
+MakeEmpty(Stack S)
+{
+    S->TopOfStack = EmptyTos;
+}
+
+/*元素进栈的例程----数组实现*/
+void
+Push(ElementType X,Stack S)
+{
+    if(IsFull(S))
+        Error("Full stack");
+    else
+        S->Array[ ++S->TopOfStack ] = X;
+}
+
+/*返回栈顶元素的例程----数组实现*/
+ElementType
+Top(Stack S)
+{
+    if(!IsEmpty(S))
+        return S->Array[ S->TopOfStack ];
+    Error("Empty stack");
+    return 0;
+}
+
+/*从栈弹出元素的例程----数组实现*/
+void
+Pop(Stack S)
+{
+    if(IsEmpty(S))
+        Error("Empty stack");
+    else
+        S->TopOfStack--;
+}
+
+
+/*给出栈顶元素并从栈弹出的例程----数组实现*/
+ElementType
+TopAndPop(Stack S)
+{
+    if(!IsEmpty(S))
+        return S->Array[ S->TopOfStack-- ];
+    Error("Empty stack");
+    return 0;
+}
