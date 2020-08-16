@@ -1,0 +1,281 @@
+3.1
+void Print(const LinkedList &l)
+{
+	Node* p = l.First();
+	while (p) {
+		std::cout << p->data << " ";
+		p = l.Advance(p);
+	}
+	std::cout << std::endl;
+}
+3.2
+void PrintLots(const LinkedList &L, const LinkedList &P)
+{
+	/*Node* l = L.First();
+	Node* p = P.First();
+	while (l && p) {
+		l = L.First();
+		int loc = P.Restrieve(p);
+		while (--loc)
+			l = L.Advance(l);      //unsafe, may raise nullptr error
+		cout << L.Restrieve(l) << " ";
+		p = P.Advance(p);
+	}*/
+	Node* Lpos;
+	Node* Ppos;
+	Lpos = L.First();
+	Ppos = P.First();
+	int Count = 1;
+	while (Lpos && Ppos) {     //safe, wouldn't raise error
+		if (P.Restrieve(Ppos) == Count++) {
+			cout << L.Restrieve(Lpos) << " ";
+			Ppos = P.Advance(Ppos);
+		}
+		Lpos = L.Advance(Lpos);   //important! 
+	}
+}
+3.3
+a
+void SinglyLinkedList::Swap(Node* before_p)
+{
+	Node* p;
+	Node* after_p;
+	p = before_p->next;
+	after_p = p->next;
+	before_p->next = after_p;
+	p->next = after_p->next;
+	after_p->next = p;
+}
+b
+void DoublyLinkedList::Swap(Node* p)
+{
+	Node* after_p = p->next;
+	Node* pre_p = p->previous;
+	Node* the_next = after_p->next;
+	after_p->previous = pre_p;
+	pre_p->next = after_p;
+	after_p->next = p;
+	p->previous = after_p;
+	p->next = the_next;
+	the_next->previous = p;
+}
+3.4
+LinkedList Intersect(const LinkedList &L1, const LinkedList &L2)
+{
+	LinkedList answer;
+	Node* loc_l1 = L1.First();
+	Node* loc_l2 = L2.First();
+	Node* loc_ans = answer.Header();
+	while (loc_l1 && loc_l2) {
+		if (L1.Restrieve(loc_l1) < L2.Restrieve(loc_l2))
+			loc_l1 = L1.Advance(loc_l1);
+		else if (L1.Restrieve(loc_l1) > L2.Restrieve(loc_l2))
+			loc_l2 = L2.Advance(loc_l2);
+		else {
+			answer.Insert(L1.Restrieve(loc_l1), loc_ans);
+			loc_l1 = L1.Advance(loc_l1);
+			loc_l2 = L2.Advance(loc_l2);
+			loc_ans = answer.Advance(loc_ans);
+		}
+	}
+	return answer;
+}
+3.5
+LinkedList Union(const LinkedList &L1, const LinkedList &L2)
+{
+	LinkedList answer;
+	int num;
+	Node* loc_l1 = L1.First();
+	Node* loc_l2 = L2.First();
+	Node* loc_ans = answer.Header();
+	while (loc_l1 && loc_l2) {
+		if (L1.Restrieve(loc_l1) < L2.Restrieve(loc_l2)) {
+			num = L1.Restrieve(loc_l1);
+			loc_l1 = L1.Advance(loc_l1);
+		}
+		else if (L1.Restrieve(loc_l1) > L2.Restrieve(loc_l2)) {
+			num = L2.Restrieve(loc_l2);
+			loc_l2 = L2.Advance(loc_l2);
+		}
+		else {
+			num = L1.Restrieve(loc_l1);
+			loc_l1 = L1.Advance(loc_l1);
+			loc_l2 = L2.Advance(loc_l2);
+		}
+		answer.Insert(num, loc_ans);
+		loc_ans = answer.Advance(loc_ans);
+	}
+	while (loc_l1) {
+		answer.Insert(L1.Restrieve(loc_l1),loc_ans);
+		loc_l1 = L1.Advance(loc_l1);
+		loc_ans = answer.Advance(loc_ans);
+	}
+	while (loc_l2) {
+		answer.Insert(L2.Restrieve(loc_l2), loc_ans);
+		loc_l2 = L2.Advance(loc_l2);
+		loc_ans = answer.Advance(loc_ans);
+	}
+	return answer;
+}
+3.6 3.7
+#include"polynomial_array.h"
+#include<algorithm>
+
+Polynomial::Polynomial() :high_power(0)
+{
+	for (int i = 0; i <= MaxDegree; ++i)
+		coeff[i] = 0;
+}
+
+std::istream& operator>>(std::istream &is, Polynomial &poly)
+{
+	int coef, expo, max_expo = 0;
+	while (is >> coef >> expo && coef) {  //input "0 0" -> end
+		poly.coeff[expo] = coef;
+		if (expo > max_expo)
+			max_expo = expo;
+	}
+	poly.high_power = max_expo;
+	return is;
+}
+
+std::ostream& operator<<(std::ostream &os, const Polynomial &poly) 
+{
+	for (int i = poly.high_power; i > 1; --i) {
+		if (poly.coeff[i] != 0) {
+			if (poly.coeff[i] == 1)
+				os << "x^" << i;
+			else
+				os << poly.coeff[i] << "x^" << i;
+		}
+		if (poly.coeff[i - 1] > 0)
+			os << "+";
+	}
+	if (poly.coeff[1] != 0) {    
+		if (poly.coeff[1] == 1)
+			os << "x";
+		else
+			os << poly.coeff[1] << "x";
+	}
+	if (poly.coeff[0] > 0)
+		os << "+" << poly.coeff[0];
+	else if (poly.coeff[0] < 0)
+		os << poly.coeff[0];
+	return os;
+}
+
+Polynomial& Polynomial::operator+=(const Polynomial &poly)
+{
+	high_power = std::max(high_power, poly.high_power);
+	for (int i = high_power; i >= 0; --i)
+		coeff[i] += poly.coeff[i];
+	return *this;
+}
+
+Polynomial operator+(const Polynomial &poly1, const Polynomial &poly2)
+{
+	Polynomial poly_sum = poly1;
+	poly_sum += poly2;
+	return poly_sum;
+}
+
+Polynomial operator*(const Polynomial &poly1, const Polynomial &poly2)
+{
+	Polynomial poly_product;
+	poly_product.high_power = poly1.high_power + poly2.high_power;
+	if (poly_product.high_power > MaxDegree)
+		throw std::runtime_error("Exceeded array size");
+	for (int i = 0; i <= poly1.high_power; ++i)
+		for (int j = 0; j <= poly2.high_power; ++j)
+			poly_product.coeff[i + j] += poly1.coeff[i] * poly2.coeff[j];
+	return poly_product;
+}
+
+Polynomial& Polynomial::operator*=(const Polynomial &poly)  //to use operator* is easier
+{
+	*this = *this * poly;
+	return *this;
+}
+3.8
+#include<iostream>
+#include"polynomial_list.h"
+using namespace std;
+
+Polynomial Pow(Polynomial poly, int exp)
+{
+	Polynomial one;
+	cin >> one; //input '1 0' make it equal one then input '0 0' to quit 
+	while (exp) {
+		if (exp & 1)
+			one *= poly;
+		poly *= poly;
+		exp >>= 1;
+	}
+	return one;
+}
+
+int main()
+{
+	Polynomial poly;
+	int n;
+	cin >> poly;    //remember '0 0' to quit
+	cin >> n;
+	cout << Pow(poly, n) << endl;
+	return 0;
+}
+3.10
+a
+int Josephus(int N,int M)
+{
+	LinkedList L;    
+	Node* p = L.Header();
+	for (int i = 1; i <= N; ++i) { 
+		L.Insert(i, p);
+		p = L.Advance(p);
+	}
+	p = L.First();
+	while (L.Size() != 1) {
+		int temp = M;
+		while (--temp) {
+			p = L.Advance(p);
+			if (p == L.Header())   //list with dummy node make it a little bit inelegant
+				p = L.Advance(p);
+		}
+		Node* the_next = L.Advance(p);
+		L.Delete(p->data);
+		p = the_next;
+		if (p == L.Header())
+			p = L.Advance(p);
+	}
+	return L.Restrieve(p);
+}
+b
+O(NM)
+c
+O(N)
+The much more faster algorithm :
+Reference(Chinese)
+
+int Josephus(int N, int M)
+{
+	int i,p = 0;
+	for (i = 2; i <= N; ++i)
+		p = (p + M) % i;
+	return p + 1;
+}
+Its running time is O(N).
+3.12
+void LinkedList::Reverse()
+{
+	Node* pre = nullptr;
+	Node* cur = First();
+	Node* the_next = cur->next;
+	while (cur) {
+		cur->next = pre;
+		pre = cur;
+		cur = the_next;
+		if(the_next)
+			the_next = the_next->next;
+	}
+	head->next = pre;
+}
