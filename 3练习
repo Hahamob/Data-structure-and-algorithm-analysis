@@ -279,3 +279,79 @@ void LinkedList::Reverse()
 	}
 	head->next = pre;
 }
+3.15
+a
+bool Find(int x,LinkedList L)
+{
+	bool flag = false;
+	int loc = 0	;
+	for(int i = 1;i != Size();++i) {
+		if(L[i].element == x) {
+			flag = true;
+			loc = i;
+			break;
+		}
+	}
+	if(flag) {
+		for(int i = loc;i != 1;--i)
+			L[i].element = L[i - 1].element;
+		L[1].element = x;
+		return true;
+	}
+	return false;
+}
+b
+Node* LinkedList::Find(int x)
+{
+	Node* pre = FindPrevious(x);
+	Node* loc_x;
+	if(pre != nullptr) {  //found
+		loc_x = pre->next;
+		pre->next = loc_x->next;
+		loc_x->next = First();
+		Header()->next = loc_x;
+		return loc_x;
+	}
+	return nullptr;
+}
+3.16
+b
+void LinkedList::RemoveDup()
+{
+	for (Node* p = First(); !IsLast(p); p = p->next) {
+		Node* q = p->next;
+		while (q) {
+			if (q->data == p->data) {
+				Node* temp = q->next;
+				delete q;
+				q = temp;
+				p->next = temp;  //need update p->next, otherwise it's a dangling pointer
+				count--;    //update the number of elements
+			}
+			else
+				q = q->next;
+		}
+	}
+}
+3.17
+b
+void LinkedList::LazyDelete(int x)
+{
+	Node* p = Find(x);
+	p->deleted = true;
+	de_count++;   //de_count is the number of being deleted
+				  //no_de_count is the number of not being deleted
+	no_de_count = count - de_count;
+	if (de_count == no_de_count) {
+		Node* q = Header();
+		while (q->next) {
+			if (q->next->deleted) {
+				Node* temp = q->next->next;
+				delete q->next;
+				q->next = temp;
+			}
+			else
+				q = q->next;
+		}
+	}
+}
