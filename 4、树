@@ -157,3 +157,39 @@ Delete( ElementType X, SearchTree T)
     return T;
 }
 
+
+AVL树的节点声明
+#ifndef _AVLTree_H
+
+struct AvlNode;
+typedef struct AVLNode *Position;
+typedef struct AVLNode *AVLTree;
+
+AVLTree MakeEmpty( AVLTree T)
+Position Find( ElementType X, AVLTree T );
+Position FindMin( AVLTree T);
+Position FindMax( AVLTree T);
+AVLTree Insert( ElementType X, AVLTree T );
+AVLTree Delete( ElementType X, AVLTree T );
+ElementType Retrieve( Position P );
+
+#endif /*_AVLTree_H*/
+
+struct AVLNode
+{
+    ElementType Element;
+    AVLTree  Left;
+    AVLTree  Right;
+};
+
+计算AVL节点的高度的函数
+static int
+Height(Position P)
+{
+    if(P==NULL)
+        return -1;
+    else
+        return P->Height;
+}
+
+
