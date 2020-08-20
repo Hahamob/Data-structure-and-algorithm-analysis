@@ -1,0 +1,109 @@
+13
+a
+/*...*/
+else if (root->left && root->right) {
+	Position temp = FindMax(root->left);
+	root->data = temp->data;
+	root->left = Delete(root->data, root->left);
+}
+/*...*/
+b
+/*...*/
+else if (root->left && root->right) {
+	Position temp;
+	bool flag = true;
+	if (flag) {
+		temp = FindMax(root->left);
+		root->data = temp->data;
+		root->left = Delete(root->data, root->left);
+		flag = false;
+	} else {
+		temp = FindMin(root->right);
+		root->data = temp->data;
+		root->right = Delete(root->data, root->right);
+		flag = true;
+	}
+}
+/*...*/
+c
+/*...*/
+int random_num(int min,int max)
+{
+	static std::default_random_engine e(time(NULL));
+	static std::uniform_int_distribution<unsigned> u(min,max);
+	return u(e);
+}
+
+else if (root->left && root->right) {
+    Position temp;
+    int choice = random_num(0,1);
+    if(choice) {
+        temp = FindMax(root->left);
+		            root->data = temp->data;
+		            root->left = Delete(root->data, root->left);
+    } else {
+        temp = FindMin(root->right);
+		            root->data = temp->data;
+		            root->right = Delete(root->data, root->right);
+    }
+}
+/*...*/
+4.15
+a.N（0）= 1，N（1）= 2，N（H）= N（H-1）+ N（H-2）+1
+b.N（H）= F（H + 2）-1 
+19
+Tree AvlTree::Insert(int x, Tree root)
+{
+	Tree temp = root;
+	std::stack<Tree> trees;  //use stack to collect the nodes on the path
+	while (temp) {
+		trees.push(temp);
+		if (x < temp->data)
+			temp = temp->left;
+		else if (x > temp->data)
+			temp = temp->right;
+	}
+	temp = new AvlNode(x);   //the place to insert
+	Tree son = temp;  
+	while (!trees.empty()) {  
+		Tree father = trees.top();  
+		if (son->data < father->data)   //each time connect the father node with its child node
+			father->left = son;
+		else
+			father->right = son;
+		if (son == father->left) {  //插在了左边
+			if (Height(father->left) - Height(father->right) == 2) {
+				if (x < father->left->data)
+					father = SingleRotateWithLeft(father);
+				else
+					father = DoubleRatateWithLeft(father);
+			}
+		} else {  //插在右边
+			if (Height(father->right) - Height(father->left) == 2) {
+				if (x > father->right->data)
+					father = SingleRotateWithRight(father);
+				else
+					father = DoubleRatateWithRight(father);
+			}
+		}
+		father->height = std::max(Height(father->left), Height(father->right)) + 1;
+		son = father;
+		trees.pop();
+	}
+	return son;
+}
+22
+Position AvlTree::DoubleRotateWithLeft(Position k3)
+{
+	Position k2 = k3->left;
+	Position k1 = k2->right;
+	k2->right = k1->left;
+	k1->left = k2;
+	k3->left = k1->right;
+	k1->right = k3;
+	k2->height = std::max(Height(k2->left), Height(k2->right)) + 1;
+	k3->height = std::max(Height(k3->left), Height(k3->right)) + 1;
+	k1->height = std::max(Height(k2), Height(k3)) + 1;
+	return k1;
+}
+23
