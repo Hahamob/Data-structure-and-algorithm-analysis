@@ -1,0 +1,98 @@
+一个简单的散列函数
+Index
+Hash(const char *Key,int TableSize)
+{
+    unsigned int HashVal=0;
+    while(*Key!='\0')
+        HashVal+=*Key++;
+        
+    return HashVal % TableSize;
+}
+
+
+一个好的散列函数
+Index
+Hash(const char *Key, int TableSize)
+{
+    unsigned int HashVal=0;
+    while(*Key!='\0')
+        HashVal=(HashVal<<5)+*Key++;
+    return HashVal % TableSize;
+}
+
+
+分离散列表的初始化例程
+HashTable
+InitializeTable(int TableSize)
+{
+    HashTable H;
+    int i;
+    
+    if(TableSize < MinTableSize)
+    {
+        Error("Table size too small");
+        return NULL;
+    }
+    
+    /*Allocate table*/
+    H=malloc(sizeof(struct HashTbl))
+    if(H==NULL)
+        FatalError("out of space!")
+        
+    H->TableSize=NextPrime(TableSize);
+    
+    /*Allocate array of lists*/
+    H->TheLists=malloc(sizeof(list) *H->TableSize)
+    if(H->TheLists==NULL)
+        FatalError("out of space!")
+    
+    /*Allocate list header*/
+    for(i=0;i<H->TableSize;i++)
+    {
+        H->TheLists[i]=malloc(sizeof(struct ListNode))
+        if(H->TheLists[i]==NULL)
+            FatalError("out of space!")
+        else
+            H->TheLists[i]->Next==NULL;
+     }
+     
+     return H;
+}
+
+
+分离散列表的Find例程
+Position
+Find(ElementType Key,HashTable H)
+{
+    Position p;
+    List L;
+    
+    L = H->TheLists[Hash(Key,H->TableSize)];
+    P = L->Next;
+    while(P!=NULL&&P->Element!=Key)
+          P=P->Next;
+    return P;
+}
+
+分离链接散列表的Insert例程
+void
+Insert(ElementType Key,HashTable H)
+{
+    Position Pos, NewCell;
+    List L;
+    
+    Pos = Find(Key,H);
+    if(Pos==NULL)
+    {
+        NewCell = malloc(sizeof(struct ListNode));
+        if(NewCell==NULL)
+            FatalError("Out of space!")
+        else
+        {
+            L = H->TheLists[Hash(Key,H->TableSize)];
+            NewCell->Next = L->Next;
+            NewCell->Element = Key;
+            L->Next = NewCell;
+        }
+      }
+}
