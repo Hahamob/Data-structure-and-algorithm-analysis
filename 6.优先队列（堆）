@@ -1,0 +1,98 @@
+优先队列的声明
+#ifndef _BinHeap_H
+
+struct HeapStruct;
+typedef struct HeapStruct *PriorityQueue;
+
+PriorityQueue Initialize( int MaxElemnets );
+void Destroy( PriorityQueue H );
+void makeEmpty( PriorityQueue H );
+void Insert( ElementType X,PriorityQueue H );
+ElementType DeleteMin( PriorityQueue H );
+ElementType FindMin( PriorityQueue H );
+int IsEmpty( PriorityQueue H );
+int IsFull( PriorityQueue H );
+
+#endif
+
+
+/*Place in implementation file*/
+struct HeapStruct
+{
+    int Capacity;
+    int size;
+    ElementType *Element;
+};
+PriorityQueue
+Initialize(int MaxElements)
+{
+    PriorityQueue H;
+    
+    if(MaxElements<MinPQSize)
+        Error("PriorityQueue queue size is too small")
+        
+    H = malloc(sizeof(struct HeapStruct));
+    if(H==NULL)
+        FatalError("Out of space!!!");
+        
+    /*Allocate the array plus one extra for sentinel*/
+    H->Elements = malloc((MaxElement+1) *sizeof(Elementype));
+    if(H==NULL)
+        FatalError("Out of space!!!");
+        
+    H->Capacity = MaxElements;
+    H->Size = 0;
+    H->Element[0] = MinData;
+    
+    return H;
+}
+
+插入到一个二叉堆的过程
+void
+Insert( ElementType X,PriorityQueue H )
+{
+    int i;
+    
+    if(IsFull(H))
+    {
+        Error("Priority queue is full");
+        return;
+    }
+    
+    for( i = ++H->Size; H->Elements[i/2] > X; i /= 2)
+        H->Elements[i] = H->Element[i/2];
+    H->Elements[i] = x;
+}
+
+在二叉堆中执行DeleteMin的函数
+ElementType
+DeleteMin(Priority H)
+{
+    int i,Child;
+    ElementType Minelement,LastElement;
+    
+    if(IsEmpty(H))
+    {
+        Error("Priority queue is empty");
+        return H->Element[0];
+    }
+    MinElement = H->Elements[1];
+    LastElement = H->Elements[ H->Size-- ];
+    
+    for( i=1;i*2<=H->Size;i=Child)
+    {
+        /*Find smaller child*/
+        Child = i*2;
+        if( Child != H->Size && H->Elements[Child+1]<H->Elements[Child])
+            Child++;
+            
+        /*Percolate one level*/
+        if(LastElement > H->Elements[Child])
+            H->Element[i] = H->Elements[Child];
+        else
+            break;
+      }
+      H->Elements[i] = LastElement;
+      return MinElement;
+}
+        
