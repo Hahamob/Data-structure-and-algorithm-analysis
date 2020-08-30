@@ -318,5 +318,24 @@ DeleteMin( BinQueue H )
     }
     
     DeleteTree = H->TheTrees[MinTree];
-    OldRoot
+    OldRoot = DeletedTree;
+    DeteleTree = DeleteTree->LeftChild;
+    free(OldRoot);
+    
+    DeleteQueue = Initialize();
+    DeleteQueue->CurrentSize = (1<<MinTree) - 1;
+    for( j = MinTree - 1;j >= 0;j--)
+    {
+        DeleteQueue->TheTrees[j] = DeleteTree;
+        DeleteTree = DeletedTree->NextSibling;
+        DeleteQueue->TheTrees[j]->NextSibling = NULL;
+    }
+    
+    H->TheTrees[MinTree] = NULL;
+    H->CurrentSize -= DeletedQueue->CurrentSize+1;
+    
+    Merge( H, DeleteQueue );
+    return MinItem;
+}
+
    
