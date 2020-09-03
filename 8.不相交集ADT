@@ -1,0 +1,44 @@
+不相交集合的类型声明
+#ifndef _DisjSet_H
+
+typedef int DisjSet[NumSets+1];
+typedef int SetType;
+typedef int ElementType;
+
+void Initilialize(DisjSet S);
+void SetUnion(DisjSet S,SetType Root1,SetType Root2);
+SetType Find(ElementType X,DisjSet S);
+
+#endif /* _DisjSet_H*/
+
+不相交集的初始化例程
+void
+Initialize(DisjSet S)
+{
+    int i;
+    
+    for(i=NumSets;i>0;i--)
+        S[i]=0;
+}
+
+一个不相交集的Find算法
+SetType
+Find(ElementType X,DisjSet S)
+{
+    if(S[X]<=0)
+        return x;
+    else
+        return Find( S[X],S);
+}
+
+用路径压缩进行不相交集的Find操作的程序
+SetType
+Find(ElementType X,DisjSet S)
+{
+    if(S[x]<=0)
+        return X;
+    else
+        return S[X] = Find(S[X],S];
+}
+
+ 
