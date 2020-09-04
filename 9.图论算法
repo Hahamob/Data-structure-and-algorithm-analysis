@@ -1,0 +1,139 @@
+简单的拓扑排序伪代码
+void
+Topsort( Graph G )
+{
+    int Counter;
+    Vertex V,W;
+    
+    for( Counter = 0; Counter < NumVertex; Counter++ )
+    {
+        V = FindNewVertexOfIndegreeZero();
+        if( V == NotAVertex )
+        {
+            Error("Graph has a cycle");
+            break;
+        }
+        TopNum[V] = Counter;
+        for each W adjacent to V
+            Indegree[W]--;
+    }
+}
+
+无权最短路径的伪代码
+void
+Unweighted( Table T )/*Assum T is initialized*/
+{
+    int CurrDist;
+    Vertex V,W;
+    
+    for( CurrDist = 0; CurrDist < NumVertex; CurrDist++ )
+        for each vertex V
+            if( !T[V].Know && T[V].Dist == CurrDist )
+            {
+                T[V].Know = True;
+                for each W adjacent to V
+                    if( T[W].Dist == Infinity )
+                    {
+                        T[W].Dist = CurrDist + 1;
+                        T[W].Path = V;
+                    }
+             }
+}
+
+无权最短路算法伪代码
+void
+Unweighted( Table T ) /*Assume T is initialized*/
+{
+    Queue Q;
+    Vertex V,W;
+    
+    Q = CreateQueue( NumVertex ); MakeEmpty( Q );
+    
+    /*Enqueue the start vertex S, determined else where*/
+    Enqueue( S,Q );
+    
+    while( !IsEmpty( Q ) )
+    {
+        V = Dequeue(Q);
+        T[V].Know = True; /*Not really needed anymore*/
+        
+        for each W adjacent to V
+            if( T[W].Dist == Infinity )
+            {
+                T[W].Dist = T[V].Dist + 1;
+                T[W].Path = V;
+                Enqueue( W,Q );
+            }
+     }
+     DisposeQueue( Q );/*Free the memory*/
+}
+
+Dijkstra算法的声明
+typedef int Vertex;
+
+struct TableEntry
+{
+    List     Header;/* Adjacency list*/
+    int      Known;
+    DistType Dist;
+    Vertex   Path;
+};
+
+/*Vertices are numbered from 0*/
+#define NotAVertex(-1)
+typedef struct TableEntry Table[ NumVertex ];
+
+表初始化例程
+void
+InitTable( Vertex Start, Graph G, Table T )
+{
+    int i;
+    
+    ReadGraph( G,T ); /*Read graph somehow*/
+    for( i=0; i<NumVertex; i++ )
+    {
+        T[i].Known = False;
+        T[i].Dist  = Infinity;
+        T[i].Path  = NotAVertex;
+    }
+    T[Start].dise = 0;
+}
+
+显印实际最短路径的算法
+/*Print shortest path to V after Dijkstra has run*/
+/*Assume that the path exists*/
+
+void 
+PrintPath( Vertex T, Table T )
+{
+    if( T[V].Path != NotAVertex )
+    {
+        printPath(T[V].Path, T);
+        printf("to");
+    }
+    printf("%v",V); /*%v is pseudocode*/
+}
+
+Dijkstra算法的伪代码
+void
+Dijkstra( Table  T )
+{
+    Vertex V,W;
+    
+    for( ; ; )
+    {
+        V = smallest unknow distance vertex;
+        if( V == NotAvertex )
+            break;
+            
+        T[V].Known = True;
+        for each W adjancent to V
+            if( !T[W].Known )
+                if( T[V].Dist + Cvw <T[W].Dist )
+                {
+                    /*update W*/
+                    Decrease( T[W].Dist to T[V].Dist + Cvw );
+                    T[W].Path = V;
+                }
+     }
+}
